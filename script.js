@@ -21,6 +21,13 @@ const reviewSubmit = document.querySelector('#review-submit');
 const quoteGrid = document.querySelector('#quote-grid');
 const modalClose = document.querySelector('#modal-close');
 const modalSubmit = document.querySelector('#modal-submit');
+const balanceButton = document.querySelector('#balance-button');
+const balanceValue = document.querySelector('#balance-value');
+const supportButton = document.querySelector('#support-button');
+const balanceModal = document.querySelector('#balance-modal');
+const balanceClose = document.querySelector('#balance-close');
+const topupAmount = document.querySelector('#topup-amount');
+const topupSubmit = document.querySelector('#topup-submit');
 const roomVisitors = document.querySelector('#room-visitors');
 const roomCandleCount = document.querySelector('#room-candle-count');
 const soundToggle = document.querySelector('#sound-toggle');
@@ -102,6 +109,21 @@ let roomCandleId = 0;
 let chosenTier = { price: 10, hours: 1, kind: 'small' };
 let dragState = null;
 const candleStorageKey = 'svet-v-serdce-candles';
+// Fill this locally with the YooMoney wallet number before testing payments.
+const YOOMONEY_RECEIVER = '4100118107278253';
+const YOOMONEY_RETURN_URL = window.location.protocol === 'http:' || window.location.protocol === 'https:'
+  ? (() => {
+    const returnUrl = new URL(window.location.href);
+    returnUrl.search = '';
+    returnUrl.hash = '';
+    returnUrl.searchParams.set('payment', 'return');
+    return returnUrl.toString();
+  })()
+  : 'https://svet-v-serce.ru/';
+const PAYMENT_MODE = 'yoomoney'; // 'demo' for local testing, 'yoomoney' for the real form.
+const pendingPaymentKey = 'svet-v-serdce-pending-payment';
+const balanceStorageKey = 'svet-v-serdce-balance';
+const pendingCandleKey = 'svet-v-serdce-pending-candle';
 let hourlyCandleCount = null;
 const candleVariants = [
   { className: 'slim', width: 11, radius: '3px 3px 2px 2px', colors: ['#9b6428', '#f2c77d', '#a56c2c'] },
@@ -313,7 +335,14 @@ document.addEventListener('pointermove', (event) => {
 
 document.addEventListener('pointerup', () => {
   if (!dragState) return;
-  dragState.candle.style.zIndex = '2';
+  const { candle, moved } = dragState;
+  candle.style.zIndex = '2';
+  if (!moved && window.matchMedia('(max-width: 900px)').matches) {
+    stage.querySelectorAll('.room-candle.candle-selected').forEach((item) => {
+      if (item !== candle) item.classList.remove('candle-selected');
+    });
+    candle.classList.toggle('candle-selected');
+  }
   dragState = null;
 });
 
@@ -372,7 +401,162 @@ function updatePreview() {
   previewTitle.textContent = tierNames[chosenTier.kind];
   previewTime.textContent = `Горит ${chosenTier.hours} ${chosenTier.hours === 1 ? 'час' : 'часа'}`;
   previewNote.textContent = tierNotes[chosenTier.kind];
-  modalSubmit.textContent = `Продолжить · ${chosenTier.price} ₽`;
+  modalSubmit.textContent = `${PAYMENT_MODE === 'demo' ? 'Поставить свечу' : 'Оплатить'} · ${chosenTier.price} ₽`;
+}
+
+function buildCandleData() {
+  const name = document.querySelector('#modal-name').value.trim() || 'Гость';
+  const prayer = document.querySelector('#modal-wish').value.trim() || 'Пусть в сердце будет мир и свет';
+  const intention = intentionField?.value || 'Мир в душе';
+  return {
+    id: `my-candle-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    name,
+    intention,
+    prayer,
+    price: chosenTier.price,
+    hours: chosenTier.hours,
+    kind: chosenTier.kind,
+    tier: chosenTier.price === 100 ? 'premium' : 'standard',
+    x: 42 + Math.random() * 16,
+    y: 38 + Math.random() * 18,
+    expiresAt: Date.now() + chosenTier.hours * 3600000
+  };
+}
+
+function showPaymentMessage(message) {
+  toastText.textContent = message;
+  toast.classList.add('show');
+  window.setTimeout(() => toast.classList.remove('show'), 6500);
+}
+
+function getBalance() {
+  const value = Number(localStorage.getItem(balanceStorageKey));
+  return Number.isFinite(value) && value > 0 ? value : 0;
+}
+
+function updateBalance() {
+  if (balanceValue) balanceValue.textContent = `${getBalance().toFixed(0)} ₽`;
+}
+
+function setBalance(value) {
+  localStorage.setItem(balanceStorageKey, String(Math.max(0, Math.round(value))));
+  updateBalance();
+}
+
+function openBalanceModal(amount = 50) {
+  if (!balanceModal) return;
+  topupAmount.value = String(Math.max(10, Math.ceil(amount)));
+  topupSubmit.textContent = `Пополнить · ${topupAmount.value} ₽`;
+  balanceModal.classList.add('open');
+  balanceModal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
+}
+
+function closeBalanceModal() {
+  balanceModal?.classList.remove('open');
+  balanceModal?.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open');
+}
+
+function completeCandlePlacement(candleData) {
+  localStorage.removeItem(pendingPaymentKey);
+  makeRoomCandle({ ...candleData, highlight: true });
+  saveCandle(candleData);
+  roomVisitors.textContent = String(Number(roomVisitors.textContent) + 1);
+  const hours = Number(candleData.hours) || chosenTier.hours;
+  showPaymentMessage(`${candleData.name}, твоя свеча будет гореть ${hours} ${hours === 1 ? 'час' : 'часа'}.`);
+  closeModal();
+  document.querySelector('#modal-name').value = '';
+  document.querySelector('#modal-wish').value = '';
+}
+
+function startYooMoneyPayment(candleData) {
+  if (PAYMENT_MODE === 'demo') {
+    completeCandlePlacement(candleData);
+    return;
+  }
+
+  if (!YOOMONEY_RECEIVER) {
+    showPaymentMessage('Укажите номер кошелька YooMoney в начале script.js, чтобы включить оплату.');
+    return;
+  }
+
+  const label = candleData.id.slice(0, 64);
+  localStorage.setItem(pendingPaymentKey, JSON.stringify({ type: 'topup', label, amount: chosenTier.price, candleData }));
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = 'https://yoomoney.ru/quickpay/confirm';
+  form.innerHTML = `
+    <input type="hidden" name="receiver" value="${YOOMONEY_RECEIVER}">
+    <input type="hidden" name="quickpay-form" value="button">
+    <input type="hidden" name="paymentType" value="AC">
+    <input type="hidden" name="sum" value="${chosenTier.price}">
+    <input type="hidden" name="label" value="${label}">
+    <input type="hidden" name="successURL" value="${YOOMONEY_RETURN_URL}">
+  `;
+  document.body.appendChild(form);
+  form.submit();
+  form.remove();
+  showPaymentMessage('Переходим к оплате YooMoney. После успешного перевода вы вернётесь на сайт.');
+}
+
+function startTopupPayment(amount, candleData = null) {
+  if (PAYMENT_MODE === 'demo') {
+    setBalance(getBalance() + amount);
+    if (candleData && getBalance() >= chosenTier.price) {
+      setBalance(getBalance() - chosenTier.price);
+      completeCandlePlacement(candleData);
+    } else {
+      showPaymentMessage(`Баланс пополнен на ${amount} ₽.`);
+    }
+    closeBalanceModal();
+    return;
+  }
+  if (!YOOMONEY_RECEIVER) {
+    showPaymentMessage('Укажите номер кошелька YooMoney, чтобы включить пополнение.');
+    return;
+  }
+  const paymentId = `topup-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  localStorage.setItem(pendingPaymentKey, JSON.stringify({ type: 'topup', label: paymentId.slice(0, 64), amount, candleData }));
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = 'https://yoomoney.ru/quickpay/confirm';
+  form.innerHTML = `<input type="hidden" name="receiver" value="${YOOMONEY_RECEIVER}"><input type="hidden" name="quickpay-form" value="button"><input type="hidden" name="paymentType" value="AC"><input type="hidden" name="sum" value="${amount}"><input type="hidden" name="label" value="${paymentId.slice(0, 64)}"><input type="hidden" name="successURL" value="${YOOMONEY_RETURN_URL}">`;
+  document.body.appendChild(form);
+  form.submit();
+  form.remove();
+  closeBalanceModal();
+  showPaymentMessage('Переходим к оплате. После успешного перевода вернитесь на сайт.');
+}
+
+function restorePaymentReturn() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('payment') !== 'return') return;
+  const raw = localStorage.getItem(pendingPaymentKey);
+  if (!raw) {
+    showPaymentMessage('Платёж завершён, но данные свечи не найдены на этом устройстве.');
+    return;
+  }
+  try {
+    const pending = JSON.parse(raw);
+    if (pending.type !== 'topup' || !pending.amount) throw new Error('Invalid pending payment.');
+    setBalance(getBalance() + Number(pending.amount));
+    const candlePrice = Number(pending.candleData?.price) || 0;
+    if (pending.candleData?.id && candlePrice > 0 && getBalance() >= candlePrice) {
+      setBalance(getBalance() - candlePrice);
+      completeCandlePlacement(pending.candleData);
+    } else {
+      localStorage.removeItem(pendingPaymentKey);
+      showPaymentMessage(`Баланс пополнен на ${pending.amount} ₽. Теперь выберите свечу.`);
+      window.setTimeout(() => openBalanceModal(50), 250);
+    }
+    const cleanUrl = new URL(window.location.href);
+    cleanUrl.searchParams.delete('payment');
+    window.history.replaceState({}, document.title, cleanUrl);
+  } catch {
+    localStorage.removeItem(pendingPaymentKey);
+    showPaymentMessage('Не удалось восстановить данные свечи после оплаты.');
+  }
 }
 
 tierCards.forEach((card) => card.addEventListener('click', () => {
@@ -383,22 +567,34 @@ tierCards.forEach((card) => card.addEventListener('click', () => {
 }));
 
 modalSubmit?.addEventListener('click', () => {
-  const name = document.querySelector('#modal-name').value.trim() || 'Гость';
-  const prayer = document.querySelector('#modal-wish').value.trim() || 'Пусть в сердце будет мир и свет';
-  const intention = intentionField?.value || 'Мир в душе';
-  const candleData = { id: `my-candle-${Date.now()}-${Math.random().toString(16).slice(2)}`, name, intention, prayer, hours: chosenTier.hours, kind: chosenTier.kind, tier: chosenTier.price === 100 ? 'premium' : 'standard', x: 42 + Math.random() * 16, y: 38 + Math.random() * 18, expiresAt: Date.now() + chosenTier.hours * 3600000 };
-  makeRoomCandle({ ...candleData, highlight: true });
-  saveCandle(candleData);
-  roomVisitors.textContent = String(Number(roomVisitors.textContent) + 1);
-  toastText.textContent = `${name}, твоя свеча будет гореть ${chosenTier.hours} ${chosenTier.hours === 1 ? 'час' : 'часа'}.`;
-  toast.classList.add('show');
-  closeModal();
-  document.querySelector('#modal-name').value = '';
-  document.querySelector('#modal-wish').value = '';
-  window.setTimeout(() => toast.classList.remove('show'), 6000);
+  const candleData = buildCandleData();
+  if (getBalance() < chosenTier.price) {
+    localStorage.setItem(pendingCandleKey, JSON.stringify(candleData));
+    openBalanceModal(Math.max(50, chosenTier.price - getBalance()));
+    return;
+  }
+  setBalance(getBalance() - chosenTier.price);
+  completeCandlePlacement(candleData);
+});
+
+balanceButton?.addEventListener('click', () => openBalanceModal(50));
+supportButton?.addEventListener('click', () => openBalanceModal(200));
+balanceClose?.addEventListener('click', closeBalanceModal);
+balanceModal?.addEventListener('click', (event) => { if (event.target === balanceModal) closeBalanceModal(); });
+topupAmount?.addEventListener('input', () => {
+  const amount = Math.max(10, Number(topupAmount.value) || 10);
+  topupSubmit.textContent = `Пополнить · ${amount} ₽`;
+});
+topupSubmit?.addEventListener('click', () => {
+  const amount = Math.max(10, Math.min(100000, Math.round(Number(topupAmount.value) || 50)));
+  const pendingCandle = JSON.parse(localStorage.getItem(pendingCandleKey) || 'null');
+  localStorage.removeItem(pendingCandleKey);
+  startTopupPayment(amount, pendingCandle);
 });
 
 updatePreview();
+updateBalance();
+restorePaymentReturn();
 
 function startMusic() {
   if (!churchMusic) return;

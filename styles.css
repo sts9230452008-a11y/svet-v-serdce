@@ -197,8 +197,13 @@ body *{text-shadow:none!important}
   .room-header > .room-actions .find-candle { grid-column: 2; grid-row: 2; }
   .room-header > .room-actions .room-cta { grid-column: 1 / -1; grid-row: 3; }
   .candle-stage { height: min(560px, 72svh); min-height: 390px; max-height: none; border-radius: 8px; }
+  .candle-stage::before { display: none; }
+  .candle-stage::after { background: radial-gradient(ellipse at center, transparent 42%, rgba(1, 6, 12, .45) 100%); }
+  .room-candle { animation: none; }
+  .room-candle .room-flame { animation-duration: 2.8s; }
   .stage-hint { max-width: 80%; line-height: 1.6; }
-  .room-candle .candle-tooltip { display: none; }
+  .room-candle .candle-tooltip { display: none; pointer-events: none; }
+  .room-candle.candle-selected .candle-tooltip { display: block; opacity: 1; transform: translate(-50%, -100%) translateY(-20px); }
   .room-footer { margin-top: 14px; font-size: 9px; line-height: 1.6; }
   .ritual .section-intro > p:last-child { font-size: 18px; }
   .steps { gap: 28px; }
@@ -221,8 +226,25 @@ body *{text-shadow:none!important}
   .modal-submit { min-height: 50px; font-size: 10px; }
   .payment-card { display: block; }
   .payment-qr { width: min(180px, 70vw); margin: 0 auto 18px; }
+  .section-intro, .voices, .charity-band, footer, .site-disclaimer { text-align: left; }
+  .section-intro h2, .voices h2, .charity-band h2 { max-width: 100%; }
+  .section-intro > p:last-child, .charity-band p { max-width: 100%; }
+  .quote-grid blockquote { text-align: left; }
+  .footer-brand + p { text-align: left; }
+  .payment-card > div:last-child { text-align: left; }
 }
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
 }
+.balance-button { border: 1px solid rgba(222,191,119,.27); background: rgba(255,255,255,.035); color: #eed29d; border-radius: 99px; padding: 16px 22px; font-size: 16px; font-weight: 800; min-height: 52px; white-space: nowrap; box-shadow: 0 8px 22px rgba(197,153,75,.2); }
+.balance-button strong { color: #f2cd7b; }
+.support-button { display: block; width: 100%; margin: 12px 0 16px; border: 0; border-radius: 4px; padding: 13px 16px; background: #b98a42; color: #fff8e8; font-weight: 700; cursor: pointer; }
+.amount-field { display: flex; align-items: center; gap: 10px; }
+.amount-field .modal-field { flex: 1; }
+.amount-field > span { font-family: var(--serif); font-size: 28px; color: #b98a42; }
+.balance-note { display: block; margin-top: 12px; color: #947453; font-size: 11px; line-height: 1.4; }
+@media (max-width: 900px) {
+  .balance-button { position: absolute; top: 15px; right: 65px; padding: 13px 17px; font-size: 14px; min-height: 46px; }
+  .support-button { min-height: 46px; }
+}
+
