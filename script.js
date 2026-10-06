@@ -246,7 +246,10 @@ function makeRoomCandle({ name, intention, prayer, tier = 'standard', kind, x, y
 function getHourlyCandleCount() {
   const now = new Date();
   const daySeed = Math.floor(new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 86400000);
-  const base = 60 + Math.abs((daySeed * 31 + now.getHours() * 47) % 91);
+  const mobile = window.matchMedia('(max-width: 900px)').matches;
+  const base = mobile
+    ? 24 + Math.abs((daySeed * 17 + now.getHours() * 11) % 19)
+    : 60 + Math.abs((daySeed * 31 + now.getHours() * 47) % 91);
   hourlyCandleCount = hourlyCandleCount === base ? (base === 150 ? 149 : base + 1) : base;
   return hourlyCandleCount;
 }
@@ -317,12 +320,13 @@ document.addEventListener('pointerup', () => {
 function openModal() {
   modal.classList.add('open');
   modal.setAttribute('aria-hidden', 'false');
-  document.querySelector('#modal-name').focus();
+  document.body.classList.add('modal-open');
 }
 
 function closeModal() {
   modal.classList.remove('open');
   modal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open');
 }
 
 roomCta?.addEventListener('click', openModal);
