@@ -168,6 +168,18 @@ body *{text-shadow:none!important}
 .preview-candle.small{width:17px;height:47px;background:linear-gradient(90deg,#6f3d1e,#b97935 50%,#5e321b)}.preview-candle.medium{width:23px;height:58px;background:linear-gradient(90deg,#bd771f,#ffe07b 50%,#b76d1b)}.preview-candle.large{width:29px;height:69px;background:linear-gradient(90deg,#9c6b16,#f6ca54 48%,#8c5a13)}.preview-candle.premium{width:36px;height:82px;background:linear-gradient(90deg,#cfc8af,#fff9e1 48%,#bdb69c)}.preview-candle.premium:after{background:#fff4c8;box-shadow:0 0 13px 5px rgba(255,240,176,.95),0 0 35px 12px rgba(255,211,95,.5)}
 /* Mobile layout and performance fixes. Keep the room usable on touch screens. */
 @media (max-width: 900px) {
+  .site-header { padding: 0 16px; gap: 8px; }
+  .brand { flex: 1 1 auto; width: auto; margin-right: 0; gap: 8px; min-width: 0; }
+  .brand-mark { flex: 0 0 42px; width: 42px; height: 47px; }
+  .brand strong { font-size: 19px; }
+  .brand small { display: none; }
+  .balance-button { position: static; order: 2; flex: 0 0 auto; padding: 13px 11px; min-height: 46px; font-size: 11px; }
+  .menu-button { order: 3; flex: 0 0 28px; padding: 0; }
+  .motto { width: 100%; gap: 8px; letter-spacing: .08em; white-space: nowrap; font-size: 8px; }
+  .motto span { width: auto; flex: 1 1 auto; }
+  .music-pointer { display: none; }
+  .charity-band h2 { font-size: 29px; line-height: 1.02; letter-spacing: -.015em; }
+  .charity-band h2 em { white-space: nowrap; }
   html { overflow-x: hidden; }
   body { overflow-x: hidden; }
   body.modal-open { overflow: hidden; }
