@@ -3,9 +3,21 @@ const toastText = document.querySelector('#toast-text');
 const closeToast = document.querySelector('#close-toast');
 closeToast?.addEventListener('click', () => toast.classList.remove('show'));
 
-document.querySelector('.menu-button').addEventListener('click', () => {
-  const nav = document.querySelector('.nav');
-  nav.classList.toggle('open');
+const menuButton = document.querySelector('.menu-button');
+const nav = document.querySelector('.nav');
+
+menuButton?.addEventListener('click', (event) => {
+  event.stopPropagation();
+  nav?.classList.toggle('open');
+});
+
+nav?.addEventListener('click', (event) => {
+  if (event.target.closest('a')) nav.classList.remove('open');
+});
+
+document.addEventListener('click', (event) => {
+  if (!nav?.classList.contains('open')) return;
+  if (!nav.contains(event.target) && !menuButton?.contains(event.target)) nav.classList.remove('open');
 });
 
 // The room uses local mock data now and keeps the same shape that a realtime

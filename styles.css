@@ -173,8 +173,8 @@ body *{text-shadow:none!important}
   .brand-mark { flex: 0 0 42px; width: 42px; height: 47px; }
   .brand strong { font-size: 19px; }
   .brand small { display: none; }
-  .balance-button { position: static; order: 2; flex: 0 0 auto; padding: 13px 11px; min-height: 46px; font-size: 11px; }
-  .menu-button { order: 3; flex: 0 0 28px; padding: 0; }
+  .balance-button { position: absolute; left: 58px; top: 50px; right: auto; order: initial; padding: 7px 12px; min-height: 34px; font-size: 11px; }
+  .menu-button { position: absolute; top: 15px; right: 16px; order: initial; width: 30px; flex: 0 0 30px; padding: 0; }
   .motto { width: 100%; gap: 8px; letter-spacing: .08em; white-space: nowrap; font-size: 8px; }
   .motto span { width: auto; flex: 1 1 auto; }
   .music-pointer { display: none; }
@@ -244,6 +244,10 @@ body *{text-shadow:none!important}
   .quote-grid blockquote { text-align: left; }
   .footer-brand + p { text-align: left; }
   .payment-card > div:last-child { text-align: left; }
+}
+
+@media (max-width: 900px) {
+  .nav.open { border-radius: 16px; overflow: hidden; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
