@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Православный храм с золотыми куполами</title>
+  <desc id="desc">Ночная векторная иллюстрация православной церкви с пятью золотыми куполами.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#081522"/>
+      <stop offset=".62" stop-color="#193347"/>
+      <stop offset="1" stop-color="#37291f"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="37%" r="48%">
+      <stop offset="0" stop-color="#f6e2ad" stop-opacity=".45"/>
+      <stop offset=".48" stop-color="#dcb36a" stop-opacity=".13"/>
+      <stop offset="1" stop-color="#dcb36a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff1ad"/>
+      <stop offset=".24" stop-color="#f5cd6a"/>
+      <stop offset=".65" stop-color="#c28a28"/>
+      <stop offset="1" stop-color="#79511b"/>
+    </linearGradient>
+    <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#d1b887"/>
+      <stop offset=".44" stop-color="#947550"/>
+      <stop offset="1" stop-color="#49392c"/>
+    </linearGradient>
+    <linearGradient id="shadowWall" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#5b4937"/>
+      <stop offset="1" stop-color="#211c1b"/>
+    </linearGradient>
+    <linearGradient id="window" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#d8c08e"/>
+      <stop offset=".3" stop-color="#6b8b99"/>
+      <stop offset="1" stop-color="#152839"/>
+    </linearGradient>
+    <filter id="softGlow"><feGaussianBlur stdDeviation="18"/></filter>
+    <filter id="smallGlow"><feGaussianBlur stdDeviation="5"/></filter>
+    <pattern id="stars" width="190" height="130" patternUnits="userSpaceOnUse">
+      <circle cx="25" cy="27" r="1.4" fill="#fae5ad" opacity=".52"/>
+      <circle cx="128" cy="80" r="1" fill="#d8e7e0" opacity=".34"/>
+      <circle cx="170" cy="22" r="1.2" fill="#f6d88e" opacity=".36"/>
+    </pattern>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#sky)"/>
+  <ellipse cx="805" cy="375" rx="590" ry="390" fill="url(#halo)"/>
+  <circle cx="1330" cy="170" r="67" fill="#fbebbd" opacity=".8"/>
+  <circle cx="1360" cy="145" r="67" fill="#0d2131" opacity=".88"/>
+  <rect width="1600" height="610" fill="url(#stars)" opacity=".7"/>
+
+  <path d="M0 630 Q240 548 475 630 T940 625 T1430 620 T1600 640 V1000 H0Z" fill="#0b1721"/>
+  <path d="M0 782 Q360 710 720 785 T1600 760 V1000 H0Z" fill="#102532" opacity=".72"/>
+  <path d="M0 874 Q380 816 800 872 T1600 850 V1000 H0Z" fill="#0a161f"/>
+
+  <!-- central cathedral -->
+  <g stroke="#31261f" stroke-width="8" stroke-linejoin="round">
+    <path d="M382 735 V465 L800 315 L1218 465 V735Z" fill="url(#wall)"/>
+    <path d="M448 735 V492 L800 370 L1152 492 V735Z" fill="url(#shadowWall)"/>
+    <path d="M342 735 H1258 L1325 782 H275Z" fill="#6c5133"/>
+    <path d="M276 782 H1325 L1400 836 H205Z" fill="#9b7338"/>
+  </g>
+
+  <!-- side chapels -->
+  <g stroke="#332820" stroke-width="7" stroke-linejoin="round">
+    <path d="M170 740 V540 L330 468 L490 540 V740Z" fill="url(#wall)"/>
+    <path d="M1110 540 L1270 468 L1430 540 V740 H1110Z" fill="url(#wall)"/>
+    <path d="M110 740 H510 L550 780 H70Z" fill="#76582f"/>
+    <path d="M1050 780 H1530 L1490 740 H1090Z" fill="#76582f"/>
+  </g>
+
+  <!-- central dome -->
+  <g stroke="#5d4018" stroke-width="7" stroke-linejoin="round">
+    <path d="M580 388 Q800 118 1020 388Z" fill="url(#gold)"/>
+    <path d="M650 388 Q800 194 950 388Z" fill="#c79231" opacity=".46"/>
+    <path d="M705 365 Q800 238 895 365" fill="none" stroke="#ffe49a" stroke-opacity=".56" stroke-width="9"/>
+    <path d="M748 385 V455 H852 V385" fill="#a67b43"/>
+  </g>
+  <g stroke="#734b16" stroke-width="6" stroke-linecap="round">
+    <path d="M800 118 V30"/>
+    <path d="M758 62 H842"/>
+    <path d="M773 45 L827 80"/>
+    <path d="M827 45 L773 80"/>
+  </g>
+  <circle cx="800" cy="26" r="11" fill="url(#gold)" stroke="#634317" stroke-width="5"/>
+
+  <!-- four smaller golden domes -->
+  <g fill="url(#gold)" stroke="#654318" stroke-width="6">
+    <path d="M232 495 Q330 340 428 495Z"/>
+    <path d="M1172 495 Q1270 340 1368 495Z"/>
+    <path d="M528 435 Q590 320 652 435Z"/>
+    <path d="M948 435 Q1010 320 1072 435Z"/>
+  </g>
+  <g stroke="#754b16" stroke-width="5" stroke-linecap="round">
+    <path d="M330 340 V275 M1270 340 V275 M590 320 V265 M1010 320 V265"/>
+    <path d="M304 300 H356 M1244 300 H1296 M570 283 H610 M990 283 H1030"/>
+  </g>
+  <g fill="url(#gold)" stroke="#654318" stroke-width="4">
+    <circle cx="330" cy="268" r="8"/><circle cx="1270" cy="268" r="8"/><circle cx="590" cy="258" r="7"/><circle cx="1010" cy="258" r="7"/>
+  </g>
+
+  <!-- crosses -->
+  <g fill="#f6d98c" stroke="#714b17" stroke-width="4">
+    <path d="M800 10 H815 V52 H850 V66 H815 V104 H785 V66 H750 V52 H785 V10Z"/>
+    <path d="M330 247 H341 V278 H367 V289 H341 V318 H319 V289 H293 V278 H319 V247Z"/>
+    <path d="M1270 247 H1281 V278 H1307 V289 H1281 V318 H1259 V289 H1233 V278 H1259 V247Z"/>
+    <path d="M590 238 H600 V267 H623 V277 H600 V303 H580 V277 H557 V267 H580 V238Z"/>
+    <path d="M1010 238 H1020 V267 H1043 V277 H1020 V303 H1000 V277 H977 V267 H1000 V238Z"/>
+  </g>
+
+  <!-- facade details -->
+  <g fill="url(#window)" stroke="#c6aa72" stroke-width="5">
+    <path d="M744 735 V542 Q800 472 856 542 V735Z"/>
+    <path d="M490 720 V585 Q530 535 570 585 V720Z"/>
+    <path d="M1030 720 V585 Q1070 535 1110 585 V720Z"/>
+    <path d="M248 710 V610 Q278 565 308 610 V710Z"/>
+    <path d="M1292 710 V610 Q1322 565 1352 610 V710Z"/>
+  </g>
+  <g fill="#f2c76f" opacity=".8" filter="url(#smallGlow)">
+    <ellipse cx="800" cy="595" rx="31" ry="50"/>
+    <ellipse cx="530" cy="624" rx="18" ry="28"/><ellipse cx="1070" cy="624" rx="18" ry="28"/>
+    <ellipse cx="278" cy="641" rx="13" ry="22"/><ellipse cx="1322" cy="641" rx="13" ry="22"/>
+  </g>
+  <path d="M640 735 H960 V836 H640Z" fill="#1a1d20" stroke="#46382b" stroke-width="8"/>
+  <path d="M682 836 V650 Q800 555 918 650 V836" fill="#090e14" stroke="#906d43" stroke-width="7"/>
+  <path d="M800 566 V836" stroke="#8a6841" stroke-width="5"/>
+  <path d="M682 710 H918" stroke="#8a6841" stroke-width="5"/>
+  <circle cx="800" cy="684" r="37" fill="#d7b361" opacity=".35"/>
+
+  <!-- candle glow at entrance -->
+  <g fill="#f3c568" filter="url(#smallGlow)">
+    <circle cx="700" cy="815" r="7"/><circle cx="900" cy="815" r="7"/><circle cx="756" cy="815" r="6"/><circle cx="844" cy="815" r="6"/>
+  </g>
+  <path d="M0 940 Q400 875 800 928 T1600 920 V1000 H0Z" fill="#060c12" opacity=".78"/>
+</svg>
