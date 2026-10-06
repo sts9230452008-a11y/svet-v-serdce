@@ -264,3 +264,12 @@ body *{text-shadow:none!important}
   .support-button { min-height: 46px; }
 }
 
+/* Keep the mobile balance below the brand, clear of the title and menu. */
+@media (max-width: 900px) {
+  .site-header { min-height: 86px; }
+  .brand { align-self: flex-start; margin-top: 16px; }
+  .brand strong { line-height: 1.15; }
+  .balance-button { top: 51px; left: 66px; right: auto; padding: 6px 11px; min-height: 32px; font-size: 11px; z-index: 2; }
+  .menu-button { top: 15px; right: 16px; z-index: 3; }
+}
+
