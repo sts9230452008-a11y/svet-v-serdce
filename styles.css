@@ -277,3 +277,8 @@ body *{text-shadow:none!important}
   .balance-button { top: 17px; left: 50%; right: auto; transform: translateX(-50%); width: 112px; padding: 8px 12px; min-height: 40px; font-size: 13px; }
 }
 
+@media (max-width: 900px) {
+  .brand strong { width: 82px; line-height: .92; white-space: normal; }
+  .balance-button { top: 17px; left: auto; right: 51px; transform: none; width: 104px; padding: 8px 10px; min-height: 40px; font-size: 13px; }
+}
+
