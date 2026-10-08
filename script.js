@@ -36,6 +36,7 @@ const modalSubmit = document.querySelector('#modal-submit');
 const balanceButton = document.querySelector('#balance-button');
 const balanceValue = document.querySelector('#balance-value');
 const supportButton = document.querySelector('#support-button');
+const footerSupport = document.querySelector('#footer-support');
 const balanceModal = document.querySelector('#balance-modal');
 const balanceClose = document.querySelector('#balance-close');
 const topupAmount = document.querySelector('#topup-amount');
@@ -222,7 +223,8 @@ function findMyCandle() {
   }
   const target = saved[saved.length - 1];
   const candles = [...stage.querySelectorAll('.room-candle')];
-  const candle = candles.find((item) => Number(item.dataset.expiresAt) === Number(target.expiresAt) && item.dataset.name === target.name);
+  const targetName = target.anonymous ? 'Анонимно' : target.name;
+  const candle = candles.find((item) => Number(item.dataset.expiresAt) === Number(target.expiresAt) && item.dataset.name === targetName);
   if (!candle) return;
   document.querySelector('#room')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   candle.classList.remove('found-candle');
@@ -230,7 +232,7 @@ function findMyCandle() {
   window.setTimeout(() => candle.classList.remove('found-candle'), 5000);
 }
 
-function makeRoomCandle({ name, intention, prayer, tier = 'standard', kind, x, y, hours = 7, expiresAt, highlight = false, owner = false, generated = false } = {}) {
+function makeRoomCandle({ name, intention, prayer, tier = 'standard', kind, x, y, hours = 7, expiresAt, highlight = false, owner = false, generated = false, anonymous = false } = {}) {
   const index = roomCandleId;
   const variant = candleVariants[index % candleVariants.length];
   const candle = document.createElement('div');
@@ -242,7 +244,8 @@ function makeRoomCandle({ name, intention, prayer, tier = 'standard', kind, x, y
   candle.dataset.id = String(index);
   candle.dataset.x = String(x ?? (7 + seeded(index, 1) * 86));
   candle.dataset.y = String(y ?? (16 + seeded(index, 2) * 68));
-  candle.dataset.name = name || roomNames[index % roomNames.length];
+  candle.dataset.name = anonymous ? 'Анонимно' : (name || roomNames[index % roomNames.length]);
+  candle.dataset.anonymous = String(Boolean(anonymous));
   candle.dataset.intention = intention || roomIntentions[index % roomIntentions.length];
   candle.dataset.prayer = prayer || roomPrayers[index % roomPrayers.length];
   candle.dataset.hours = String(normalizedHours);
@@ -298,7 +301,7 @@ function seedRoom() {
     const hours = maxHoursForKind(kind);
     const alreadyBurned = seeded(i, 9) * hours * 0.75;
     const prayer = roomPrayers[i % roomPrayers.length];
-    makeRoomCandle({ intention, prayer, hours, expiresAt: Date.now() + (hours - alreadyBurned) * 3600000, tier: kind === 'premium' ? 'premium' : 'standard', kind, generated: true });
+    makeRoomCandle({ intention, prayer, hours, expiresAt: Date.now() + (hours - alreadyBurned) * 3600000, tier: kind === 'premium' ? 'premium' : 'standard', kind, generated: true, anonymous: seeded(i, 11) < 0.3 });
   }
 }
 
@@ -377,6 +380,13 @@ modalClose?.addEventListener('click', closeModal);
 modal?.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
 document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeModal(); });
 
+document.querySelector('#modal-anonymous')?.addEventListener('change', (event) => {
+  const nameField = document.querySelector('#modal-name');
+  if (!nameField) return;
+  nameField.disabled = event.target.checked;
+  nameField.placeholder = event.target.checked ? 'Имя не будет показано' : 'Как к вам обращаться?';
+});
+
 function openReviewModal() {
   reviewModal?.classList.add('open');
   reviewModal?.setAttribute('aria-hidden', 'false');
@@ -417,12 +427,14 @@ function updatePreview() {
 }
 
 function buildCandleData() {
+  const anonymous = document.querySelector('#modal-anonymous')?.checked || false;
   const name = document.querySelector('#modal-name').value.trim() || 'Гость';
   const prayer = document.querySelector('#modal-wish').value.trim() || 'Пусть в сердце будет мир и свет';
   const intention = intentionField?.value || 'Мир в душе';
   return {
     id: `my-candle-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-    name,
+    name: anonymous ? '' : name,
+    anonymous,
     intention,
     prayer,
     price: chosenTier.price,
@@ -476,9 +488,15 @@ function completeCandlePlacement(candleData) {
   saveCandle(candleData);
   roomVisitors.textContent = String(Number(roomVisitors.textContent) + 1);
   const hours = Number(candleData.hours) || chosenTier.hours;
-  showPaymentMessage(`${candleData.name}, твоя свеча будет гореть ${hours} ${hours === 1 ? 'час' : 'часа'}.`);
+  const candleSubject = candleData.anonymous ? 'Анонимная свеча' : candleData.name;
+  showPaymentMessage(`${candleSubject}, твоя свеча будет гореть ${hours} ${hours === 1 ? 'час' : 'часа'}.`);
   closeModal();
-  document.querySelector('#modal-name').value = '';
+  const nameField = document.querySelector('#modal-name');
+  const anonymousField = document.querySelector('#modal-anonymous');
+  nameField.value = '';
+  anonymousField.checked = false;
+  nameField.disabled = false;
+  nameField.placeholder = 'Как к вам обращаться?';
   document.querySelector('#modal-wish').value = '';
 }
 
@@ -591,6 +609,7 @@ modalSubmit?.addEventListener('click', () => {
 
 balanceButton?.addEventListener('click', () => openBalanceModal(50));
 supportButton?.addEventListener('click', () => openBalanceModal(200));
+footerSupport?.addEventListener('click', () => supportButton?.click());
 balanceClose?.addEventListener('click', closeBalanceModal);
 balanceModal?.addEventListener('click', (event) => { if (event.target === balanceModal) closeBalanceModal(); });
 topupAmount?.addEventListener('input', () => {

@@ -102,12 +102,12 @@
 .room-candle.found-candle{z-index:12;animation:found-candle-pulse 1s ease-in-out 4 alternate}
 .room-candle.found-candle .room-flame{filter:brightness(1.35);box-shadow:0 0 18px 8px rgba(255,222,126,.95),0 0 58px 22px rgba(255,175,49,.68)}
 .payment-card{display:flex;align-items:center;gap:26px;border:1px solid rgba(168,126,61,.3);border-radius:8px;padding:24px;background:linear-gradient(135deg,#f8f0df,#e8dac2);box-shadow:0 18px 38px rgba(77,50,26,.12)}
-.payment-qr{flex:0 0 164px;padding:9px;background:#fff8e8;border:5px solid #b98a42;border-radius:5px;box-shadow:0 0 0 1px rgba(75,47,22,.18),0 8px 20px rgba(72,43,17,.16)}
+.payment-qr{flex:0 0 220px;padding:10px;background:#fff8e8;border:5px solid #b98a42;border-radius:5px;box-shadow:0 8px 20px rgba(72,43,17,.16)}
 .payment-qr svg{display:block;width:100%;height:auto}
 .payment-card strong{display:block;font-family:var(--serif);font-size:30px;line-height:1;color:#4a3021;margin-bottom:10px}
 .payment-card p{font-family:var(--serif);font-size:18px;line-height:1.25;color:#73583f;margin:0 0 11px}
 .payment-card small{display:block;font-size:10px;line-height:1.45;letter-spacing:.04em;color:#947453}
-@media(max-width:900px){.music-guide{order:5;width:100%;justify-content:flex-start;text-align:left;font-size:26px;line-height:1.05}.music-pointer{width:48px;height:26px;flex-basis:48px}.music-pointer:before{right:13px;top:11px;height:4px}.music-pointer:after{top:3px;border-top-width:10px;border-bottom-width:10px;border-left-width:15px}.payment-card{margin-top:38px;padding:18px;gap:16px}.payment-qr{flex-basis:130px}.payment-card strong{font-size:25px}.payment-card p{font-size:16px}}
+@media(max-width:900px){.music-guide{order:5;width:100%;justify-content:flex-start;text-align:left;font-size:26px;line-height:1.05}.music-pointer{width:48px;height:26px;flex-basis:48px}.music-pointer:before{right:13px;top:11px;height:4px}.music-pointer:after{top:3px;border-top-width:10px;border-bottom-width:10px;border-left-width:15px}.payment-card{margin-top:38px;padding:18px;gap:16px}.payment-qr{flex-basis:190px}.payment-card strong{font-size:25px}.payment-card p{font-size:16px}}
 .ritual .section-intro h2{font-size:clamp(54px,5.8vw,82px);line-height:.95;color:#352219}
 .ritual .section-intro h2 .review-accent{color:#b18a4e}
 .ritual .section-intro>p:last-child{font-size:24px;line-height:1.45;font-weight:600;color:#624c3c}
@@ -237,7 +237,7 @@ body *{text-shadow:none!important}
   .candle-preview strong { font-size: 20px; }
   .modal-submit { min-height: 50px; font-size: 10px; }
   .payment-card { display: block; }
-  .payment-qr { width: min(180px, 70vw); margin: 0 auto 18px; }
+  .payment-qr { width: min(220px, 78vw); margin: 0 auto 18px; }
   .section-intro, .voices, .charity-band, footer, .site-disclaimer { text-align: left; }
   .section-intro h2, .voices h2, .charity-band h2 { max-width: 100%; }
   .section-intro > p:last-child, .charity-band p { max-width: 100%; }
@@ -259,6 +259,15 @@ body *{text-shadow:none!important}
 .amount-field .modal-field { flex: 1; }
 .amount-field > span { font-family: var(--serif); font-size: 28px; color: #b98a42; }
 .balance-note { display: block; margin-top: 12px; color: #947453; font-size: 11px; line-height: 1.4; }
+.anonymous-option { display: flex; align-items: center; gap: 9px; margin-top: 13px; color: rgba(255,239,203,.68); font-size: 12px; cursor: pointer; }
+.anonymous-option input { accent-color: #d8aa58; width: 16px; height: 16px; }
+.anonymous-option:has(input:checked) { color: #f1d28e; }
+.modal-field:disabled { opacity: .55; cursor: not-allowed; }
+.payment-qr { position: relative; padding: 10px; border: 5px solid #b98a42; border-radius: 9px; background: #fffdf5; box-shadow: 0 8px 20px rgba(72,43,17,.16); }
+.payment-qr img { display: block; width: 100%; aspect-ratio: 1; height: auto; object-fit: contain; border-radius: 2px; }
+.payment-card .payment-qr { background: #fffdf5; }
+.footer-support { border: 0; padding: 0; background: none; color: inherit; font: inherit; cursor: pointer; }
+.footer-support:hover { color: #fff; }
 @media (max-width: 900px) {
   .balance-button { position: absolute; top: 15px; right: 65px; padding: 13px 17px; font-size: 14px; min-height: 46px; }
   .support-button { min-height: 46px; }
