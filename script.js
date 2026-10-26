@@ -52,6 +52,7 @@ const previewTime = document.querySelector('#preview-time');
 const previewNote = document.querySelector('#preview-note');
 const intentionField = document.querySelector('#modal-intention');
 const churchMusic = document.querySelector('#church-music');
+const shareButtons = [...document.querySelectorAll('[data-share]')];
 const musicTracks = Array.from({ length: 21 }, (_, index) => `Музыка/${String(index + 1).padStart(2, '0')}-track.mp3`);
 let musicTrackIndex = 0;
 let lastMusicTrackIndex = -1;
@@ -146,6 +147,31 @@ const candleVariants = [
   { className: 'wine', width: 17, radius: '4px 4px 2px 2px', colors: ['#6c3026', '#c96e42', '#7d3629'] },
   { className: 'glass', width: 21, radius: '7px 7px 3px 3px', colors: ['#6a5540', '#e7b56c', '#654a32'] }
 ];
+
+function getSharePageUrl() {
+  const shareUrl = new URL(window.location.href);
+  shareUrl.hash = '';
+  shareUrl.searchParams.delete('payment');
+  return shareUrl.toString();
+}
+
+function setupShareButtons() {
+  const url = getSharePageUrl();
+  const title = document.title;
+  const text = `${title} — тихое место, чтобы зажечь виртуальную свечу.`;
+  const links = {
+    telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
+    vk: `https://vk.com/share.php?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&comment=${encodeURIComponent(text)}`,
+    max: `https://max.ru/:share?text=${encodeURIComponent(`${text} ${url}`)}`
+  };
+
+  shareButtons.forEach((button) => {
+    const shareUrl = links[button.dataset.share];
+    if (shareUrl) button.href = shareUrl;
+  });
+}
+
+setupShareButtons();
 
 function seeded(index, salt) {
   const value = Math.sin(index * 999 + salt * 17.13) * 43758.5453;

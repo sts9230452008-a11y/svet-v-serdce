@@ -114,6 +114,24 @@
   margin-left: auto;
   margin-right: auto;
 }
+.payment-card .footer-share {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(168,126,61,.22);
+}
+.payment-card .footer-share > span {
+  color: #947453;
+}
+.payment-card .footer-share-buttons {
+  justify-content: center;
+}
+.payment-card .share-button {
+  color: #6f5036;
+  border-color: rgba(132,99,55,.32);
+}
+.payment-card .share-button:hover {
+  color: #241611;
+}
 @media(max-width:900px){.music-guide{order:5;width:100%;justify-content:flex-start;text-align:left;font-size:26px;line-height:1.05}.music-pointer{width:48px;height:26px;flex-basis:48px}.music-pointer:before{right:13px;top:11px;height:4px}.music-pointer:after{top:3px;border-top-width:10px;border-bottom-width:10px;border-left-width:15px}.payment-card{margin-top:38px;padding:18px;gap:16px}.payment-card strong{font-size:25px}.payment-card p{font-size:16px}}
 .ritual .section-intro h2{font-size:clamp(54px,5.8vw,82px);line-height:.95;color:#352219}
 .ritual .section-intro h2 .review-accent{color:#b18a4e}
@@ -249,6 +267,7 @@ body *{text-shadow:none!important}
   .quote-grid blockquote { text-align: left; }
   .footer-brand + p { text-align: left; }
   .payment-card > div:last-child { text-align: left; }
+  .footer-share { margin-top: 30px; }
 }
 
 @media (max-width: 900px) {
@@ -265,6 +284,14 @@ body *{text-shadow:none!important}
 .amount-field .modal-field { flex: 1; }
 .amount-field > span { font-family: var(--serif); font-size: 28px; color: #b98a42; }
 .balance-note { display: block; margin-top: 12px; color: #947453; font-size: 11px; line-height: 1.4; }
+.footer-share { margin-top: 6px; }
+.footer-share > span { display: block; margin-bottom: 10px; color: #d7c09a; font-size: 11px; }
+.footer-share-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.share-button { display: inline-flex; align-items: center; justify-content: center; min-width: 66px; padding: 10px 13px; border: 1px solid rgba(215,192,154,.35); border-radius: 999px; color: #f6e8c9; font-size: 11px; font-weight: 700; transition: .2s ease; }
+.share-button:hover { transform: translateY(-2px); color: #241611; background: #d7c09a; border-color: #d7c09a; }
+.share-telegram:hover { background: #8cc9e8; border-color: #8cc9e8; }
+.share-vk:hover { background: #8fb7f2; border-color: #8fb7f2; }
+.share-max:hover { background: #cbb8ff; border-color: #cbb8ff; }
 .anonymous-option { display: flex; align-items: center; gap: 9px; margin-top: 13px; color: rgba(255,239,203,.68); font-size: 12px; cursor: pointer; }
 .anonymous-option input { accent-color: #d8aa58; width: 16px; height: 16px; }
 .anonymous-option:has(input:checked) { color: #f1d28e; }
