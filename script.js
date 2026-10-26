@@ -53,6 +53,7 @@ const previewNote = document.querySelector('#preview-note');
 const intentionField = document.querySelector('#modal-intention');
 const churchMusic = document.querySelector('#church-music');
 const shareButtons = [...document.querySelectorAll('[data-share]')];
+const analyticsStorageKey = 'svet-v-serdce-analytics-session';
 const musicTracks = Array.from({ length: 21 }, (_, index) => `Музыка/${String(index + 1).padStart(2, '0')}-track.mp3`);
 let musicTrackIndex = 0;
 let lastMusicTrackIndex = -1;
@@ -166,12 +167,31 @@ function setupShareButtons() {
   };
 
   shareButtons.forEach((button) => {
+  button.addEventListener('click', () => trackEvent('share_click', { network: button.dataset.share }));
+});
+
+shareButtons.forEach((button) => {
     const shareUrl = links[button.dataset.share];
     if (shareUrl) button.href = shareUrl;
   });
 }
 
 setupShareButtons();
+
+function trackEvent(name, details = {}) {
+  const payload = { name, details, path: window.location.pathname, at: new Date().toISOString() };
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push(payload);
+  try {
+    const events = JSON.parse(sessionStorage.getItem(analyticsStorageKey) || '[]');
+    events.push(payload);
+    sessionStorage.setItem(analyticsStorageKey, JSON.stringify(events.slice(-50)));
+  } catch {
+    // Analytics must never interrupt the payment or candle flow.
+  }
+}
+
+trackEvent('page_view');
 
 function seeded(index, salt) {
   const value = Math.sin(index * 999 + salt * 17.13) * 43758.5453;
@@ -495,6 +515,7 @@ function setBalance(value) {
 
 function openBalanceModal(amount = 50) {
   if (!balanceModal) return;
+  trackEvent('topup_modal_open', { amount });
   topupAmount.value = String(Math.max(10, Math.ceil(amount)));
   topupSubmit.textContent = `Пополнить · ${topupAmount.value} ₽`;
   balanceModal.classList.add('open');
@@ -557,6 +578,7 @@ function startYooMoneyPayment(candleData) {
 }
 
 function startTopupPayment(amount, candleData = null) {
+  trackEvent('payment_started', { amount, type: candleData ? 'candle' : 'topup' });
   if (PAYMENT_MODE === 'demo') {
     setBalance(getBalance() + amount);
     if (candleData && getBalance() >= chosenTier.price) {
@@ -597,6 +619,7 @@ function restorePaymentReturn() {
     const pending = JSON.parse(raw);
     if (pending.type !== 'topup' || !pending.amount) throw new Error('Invalid pending payment.');
     setBalance(getBalance() + Number(pending.amount));
+    trackEvent('payment_returned', { amount: Number(pending.amount), type: pending.type });
     const candlePrice = Number(pending.candleData?.price) || 0;
     if (pending.candleData?.id && candlePrice > 0 && getBalance() >= candlePrice) {
       setBalance(getBalance() - candlePrice);
@@ -623,6 +646,7 @@ tierCards.forEach((card) => card.addEventListener('click', () => {
 }));
 
 modalSubmit?.addEventListener('click', () => {
+  trackEvent('candle_submit_click', { price: chosenTier.price });
   const candleData = buildCandleData();
   if (getBalance() < chosenTier.price) {
     localStorage.setItem(pendingCandleKey, JSON.stringify(candleData));
@@ -635,6 +659,8 @@ modalSubmit?.addEventListener('click', () => {
 
 balanceButton?.addEventListener('click', () => openBalanceModal(50));
 supportButton?.addEventListener('click', () => openBalanceModal(200));
+primaryButton?.addEventListener('click', () => trackEvent('hero_cta_click'));
+roomCta?.addEventListener('click', () => trackEvent('room_cta_click'));
 footerSupport?.addEventListener('click', () => supportButton?.click());
 balanceClose?.addEventListener('click', closeBalanceModal);
 balanceModal?.addEventListener('click', (event) => { if (event.target === balanceModal) closeBalanceModal(); });
